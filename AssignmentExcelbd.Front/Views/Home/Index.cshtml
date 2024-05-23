@@ -1,0 +1,83 @@
+﻿@model IEnumerable<AssignmentExcelbd.Shared.PatientInfo>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="container-fluid mt-5">
+    <h3>List of Patients</h3>
+    <a asp-action="Create" class="btn btn-primary mb-3">Insert New</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Disease</th>
+                <th>Is Epilepsy</th>
+                <th>Allergies</th>
+                <th>NCDs</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var patient in Model)
+            {
+                <tr>
+                    <td>@patient.Name</td>
+                    <td>@patient.Diseases?.Name</td>
+                    <td>@patient.IsEpilepsy</td>
+                    <td>
+                        @if (patient.Allergies_Details != null && patient.Allergies_Details.Any())
+                        {
+                            <ul>
+                                @foreach (var allergyDetail in patient.Allergies_Details)
+                                {
+                                    <li>@allergyDetail.Allergies?.Name</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No Allergies</span>
+                        }
+                    </td>
+                    <td>
+                        @if (patient.NCD_Details != null && patient.NCD_Details.Any())
+                        {
+                            <ul>
+                                @foreach (var ncdDetail in patient.NCD_Details)
+                                {
+                                    <li>@ncdDetail.NCD?.Name</li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <span>No NCDs</span>
+                        }
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@patient.Id" class="btn btn-warning">Edit</a>
+                        <form asp-action="Delete" asp-route-id="@patient.Id" method="post" class="delete-form" style="display:inline;">
+                            <button type="button" class="btn btn-danger delete-button">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-button');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    if (confirm('Are you sure you want to delete this patient?')) {
+                        this.closest('form').submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
